@@ -29,7 +29,7 @@ if (isset($_GET['pinjam'])) {
             } else {
                 // Hitung Tanggal Pinjam & Kembali (default +7 hari)
                 $tgl_pinjam = date('Y-m-d');
-                $tgl_kembali = date('Y-m-d', strtotime('+7 days'));
+                $tgl_kembali = date('Y-m-d', strtotime('+14 days'));
 
                 // Mulai Insert Peminjaman dengan field tanggal_jatuh_tempo dan status default
                 $sql_pinjam = "INSERT INTO peminjaman (id_anggota, id_buku, tanggal_peminjaman, tanggal_pengembalian, tanggal_jatuh_tempo, status) 

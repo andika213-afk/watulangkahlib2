@@ -19,13 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     $email_or_username = mysqli_real_escape_string($koneksi, trim($_POST['email']));
     $password = $_POST['password'];
 
-    // Pertama, cek ke tabel petugas (admin)
+    // Cek ke tabel petugas (admin)
     $sql_admin = "SELECT * FROM petugas WHERE email_petugas = '$email_or_username' OR username_petugas = '$email_or_username'";
     $result_admin = mysqli_query($koneksi, $sql_admin);
 
     if (mysqli_num_rows($result_admin) > 0) {
         $row = mysqli_fetch_assoc($result_admin);
-        // Verifikasi password admin
         if (password_verify($password, $row['password_petugas'])) {
             $_SESSION['user_id'] = $row['id_petugas'];
             $_SESSION['nama'] = $row['nama_petugas'];
@@ -36,13 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             $error = 'Password salah';
         }
     } else {
-        // Jika tidak ketemu di petugas, cek ke tabel anggota (siswa)
+        // Cek ke tabel anggota (user)
         $sql_user = "SELECT * FROM anggota WHERE email = '$email_or_username' OR username = '$email_or_username'";
         $result_user = mysqli_query($koneksi, $sql_user);
 
         if (mysqli_num_rows($result_user) > 0) {
             $row = mysqli_fetch_assoc($result_user);
-            // Verifikasi password anggota
             if (password_verify($password, $row['password'])) {
                 $_SESSION['user_id'] = $row['id_anggota'];
                 $_SESSION['nama'] = $row['nama'];
@@ -83,12 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             <div class="alert alert-danger p-2 text-center small"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <!-- Visual Toggle (Cosmetic as per screenshot) -->
-        <div class="auth-role-toggle">
-            <a href="#" class="toggle-btn active">User</a>
-            <a href="#" class="toggle-btn">Admin</a>
-        </div>
-
         <form action="login.php" method="POST" class="text-start">
             <div class="mb-3">
                 <label class="form-label fw-semibold small">Email</label>
@@ -107,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             </div>
 
             <button type="submit" name="login" class="btn btn-auth w-100 mb-4">
-                <i class="fa fa-sign-in-alt me-2"></i> Masuk sebagai User
+                <i class="fa fa-sign-in-alt me-2"></i> Masuk
             </button>
 
             <div class="text-center small text-muted">
@@ -118,18 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Simple script to toggle visual active class
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            // Ganti teks tombol jika perlu
-            const roleText = this.innerText;
-            document.querySelector('.btn-auth').innerHTML = `<i class="fa fa-sign-in-alt me-2"></i> Masuk sebagai ${roleText}`;
-        });
-    });
-</script>
+
 </body>
 </html>
